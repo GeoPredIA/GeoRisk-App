@@ -1,0 +1,30 @@
+name: georisk
+description: "GeoRisk - Evaluación inteligente de riesgos geológicos y socioambientales."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # Manejo de estado simple con ChangeNotifier (usado en todos los *_provider.dart)
+  provider: ^6.1.2
+
+  # Cliente HTTP para las llamadas a los servicios SAP (core/network/sap_api_client.dart)
+  dio: ^5.4.3
+
+  # NOTA: cuando implementes iot_sentinel con el gráfico de
+  # "Evolución Dinámica: Humedad del Suelo", agrega también:
+  # fl_chart: ^0.68.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
