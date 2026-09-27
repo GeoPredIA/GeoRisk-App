@@ -13,16 +13,13 @@
 import 'package:flutter/material.dart';
 
 import '../../features/zone_detail/presentation/screens/zone_detail_screen.dart';
-import '../../features/review_approval/presentation/screens/review_detail_screen_placeholder.dart';
+import '../../features/review_approval/presentation/screens/review_inbox_screen.dart';
 
 class AppRoutes {
-  // Nombres de ruta como constantes evita errores de tipeo
-  // al navegar (Navigator.pushNamed(context, AppRoutes.zoneDetail)).
   static const String zoneDetail = '/zone-detail';
-  static const String reviewDetail = '/review-detail';
+  static const String reviewInbox = '/review-inbox';
 
   /// Navega al detalle de una zona pasando su código como argumento.
-  /// Se usa desde dashboard_screen.dart al tocar una ZoneListCard.
   static void goToZoneDetail(BuildContext context, {required String zoneCode}) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -31,11 +28,11 @@ class AppRoutes {
     );
   }
 
-  /// Navega al detalle de una tarea de revisión (feature review_approval).
-  static void goToReviewDetail(BuildContext context, {required String taskId}) {
+  /// Navega a la bandeja de revisión humana HITL.
+  static void goToReviewDetail(BuildContext context, {String? taskId}) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ReviewDetailScreenPlaceholder(taskId: taskId),
+        builder: (_) => const ReviewInboxScreen(),
       ),
     );
   }

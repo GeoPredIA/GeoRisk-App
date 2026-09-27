@@ -16,7 +16,7 @@ import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/multiagent_analysis/presentation/screens/multiagent_analysis_screen.dart';
 import '../../features/iot_sentinel/presentation/screens/iot_sentinel_screen.dart';
 import '../../features/review_approval/presentation/screens/review_inbox_screen.dart';
-import '../../features/integration/presentation/screens/integration_screen.dart';
+import '../../features/assistant/presentation/screens/assistant_screen.dart';
 
 class MainBottomNav extends StatefulWidget {
   const MainBottomNav({super.key});
@@ -37,7 +37,7 @@ class _MainBottomNavState extends State<MainBottomNav> {
     MultiagentAnalysisScreen(),     // 1 - Multiagentes
     IotSentinelScreen(),            // 2 - IoT Sentinel
     ReviewInboxScreen(),            // 3 - Revisión
-    IntegrationScreen(),            // 4 - Integración
+    AssistantScreen(),              // 4 - Asistente Joule
   ];
 
   @override
@@ -72,8 +72,8 @@ class _MainBottomNavState extends State<MainBottomNav> {
             label: 'Revisión',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.hub),
-            label: 'Integración',
+            icon: Icon(Icons.auto_awesome),
+            label: 'Asistente',
           ),
         ],
       ),
