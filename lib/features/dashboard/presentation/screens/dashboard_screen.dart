@@ -23,6 +23,7 @@ import '../providers/dashboard_provider.dart';
 import '../widgets/zone_filter_chips.dart';
 import '../widgets/zone_search_bar.dart';
 import '../widgets/zone_list_card.dart';
+import '../../../auth/presentation/screens/profile_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -31,12 +32,16 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GeoRisk', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: CircleAvatar(child: Icon(Icons.person_outline)),
+        title: const Text('GeoRisk',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        actions: [
+          IconButton(
+            tooltip: 'Abrir perfil',
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const ProfileScreen())),
+            icon: const CircleAvatar(child: Icon(Icons.person_outline)),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       // Consumer se re-construye automáticamente cada vez que
@@ -54,9 +59,11 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.cloud_off, size: 40, color: AppColors.textSecondary),
+                    const Icon(Icons.cloud_off,
+                        size: 40, color: AppColors.textSecondary),
                     const SizedBox(height: 12),
-                    Text(provider.errorMessage ?? 'Ocurrió un error', textAlign: TextAlign.center),
+                    Text(provider.errorMessage ?? 'Ocurrió un error',
+                        textAlign: TextAlign.center),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: provider.loadDashboard,
@@ -84,15 +91,20 @@ class DashboardScreen extends StatelessWidget {
                       children: [
                         const Row(
                           children: [
-                            SyncStatusChip(label: 'Inteligencia para la exploración', status: SyncStatus.online),
+                            SyncStatusChip(
+                                label: 'Inteligencia para la exploración',
+                                status: SyncStatus.online),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        const SyncStatusChip(label: 'SAP HANA Cloud · Sincronizado', status: SyncStatus.online),
+                        const SyncStatusChip(
+                            label: 'SAP HANA Cloud · Sincronizado',
+                            status: SyncStatus.online),
                         const SizedBox(height: 12),
                         const Text(
                           'Cada zona, una decisión informada',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 6),
                         const Text(
@@ -118,33 +130,38 @@ class DashboardScreen extends StatelessWidget {
                       title: 'Zonas de exploración',
                       value: '${stats.totalZones}',
                       footer: Text('↑ +${stats.newZonesThisMonth} este mes',
-                          style: const TextStyle(color: AppColors.riskLow, fontSize: 12)),
+                          style: const TextStyle(
+                              color: AppColors.riskLow, fontSize: 12)),
                     ),
                     KpiCard(
                       title: 'Riesgo global prom.',
                       value: stats.avgGlobalRisk.toStringAsFixed(1),
                       suffix: '/100',
                       footer: Text('● ${stats.avgRiskLabel}',
-                          style: const TextStyle(color: AppColors.riskMedium, fontSize: 12)),
+                          style: const TextStyle(
+                              color: AppColors.riskMedium, fontSize: 12)),
                     ),
                     KpiCard(
                       title: 'Pendientes de revisión',
                       value: '${stats.pendingReviews}',
                       footer: Text('● ${stats.pendingCriticality}',
-                          style: const TextStyle(color: AppColors.riskHigh, fontSize: 12)),
+                          style: const TextStyle(
+                              color: AppColors.riskHigh, fontSize: 12)),
                     ),
                     KpiCard(
                       title: 'Evaluaciones compl.',
                       value: '${stats.completedEvaluations}',
                       footer: Text('+ ${stats.aiConfidence}% conf. IA',
-                          style: const TextStyle(color: AppColors.riskLow, fontSize: 12)),
+                          style: const TextStyle(
+                              color: AppColors.riskLow, fontSize: 12)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
 
                 const Text('Zonas bajo evaluación',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
 
                 ZoneSearchBar(onChanged: provider.setSearchQuery),
@@ -156,7 +173,13 @@ class DashboardScreen extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // --- Lista de zonas (ya filtrada por el provider) ---
-                ...provider.zones.map((zone) => ZoneListCard(zone: zone)),
+                ListView.builder(
+                  itemCount: provider.zones.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) =>
+                      ZoneListCard(zone: provider.zones[index]),
+                ),
               ],
             ),
           );

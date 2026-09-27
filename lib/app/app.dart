@@ -8,8 +8,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'navigation/main_bottom_nav.dart';
 import '../core/theme/app_theme.dart';
+import '../features/auth/presentation/screens/login_screen.dart';
 
 class GeoRiskApp extends StatelessWidget {
   const GeoRiskApp({super.key});
@@ -29,7 +29,7 @@ class GeoRiskApp extends StatelessWidget {
       // (Panorama, Multiagentes, IoT Sentinel, Revisión, Integración).
       // Si más adelante agregas login, aquí se pondría un
       // AuthGate/SplashScreen en su lugar.
-      home: const MainBottomNav(),
+      home: const LoginScreen(),
     );
   }
 }
