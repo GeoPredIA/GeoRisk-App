@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class GeoPredIALogo extends StatelessWidget {
@@ -46,7 +46,7 @@ class GeoPredIALogo extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: 'Pred',
+                      text: 'Pre',
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: size * 0.48,

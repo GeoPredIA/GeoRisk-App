@@ -12,7 +12,7 @@ import '../theme/app_theme.dart';
 enum SyncStatus { online, syncing, queued, offline }
 
 class SyncStatusChip extends StatelessWidget {
-  final String label;         // Ej: "HANA Cloud", "Sincronizado"
+  final String label; // Ej: "HANA Cloud", "Sincronizado"
   final SyncStatus status;
 
   const SyncStatusChip({
@@ -50,9 +50,16 @@ class SyncStatusChip extends StatelessWidget {
             decoration: BoxDecoration(color: _color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(color: _color, fontSize: 12, fontWeight: FontWeight.w600),
+          Flexible(
+            child: Text(
+              label,
+              softWrap: true,
+              style: TextStyle(
+                color: _color,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
