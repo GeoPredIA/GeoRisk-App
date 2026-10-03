@@ -90,7 +90,7 @@ void main() {
       '¿Cómo puedo priorizar una revisión ambiental?',
     );
     expect(openQuestion.topic, contains('ambiental'));
-    expect(openQuestion.sources, contains('Dataset local GeoPreIA'));
+    expect(openQuestion.sources, contains('Dataset local GeoPredIA'));
   });
 
   testWidgets('Joule responde dentro de una pantalla móvil',
@@ -172,10 +172,37 @@ void main() {
       tester.widget<Text>(find.text('Zonas de exploración')).textAlign,
       TextAlign.center,
     );
+    expect(
+      find.descendant(
+        of: find.byType(KpiCard),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Padding &&
+              widget.padding ==
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      ),
+      findsOneWidget,
+    );
     final valueRichText = find.byWidgetPredicate(
       (widget) => widget is RichText && widget.text.toPlainText() == '140',
     );
     expect(tester.widget<RichText>(valueRichText).textAlign, TextAlign.center);
+  });
+
+  testWidgets('Panorama muestra el nombre completo de Evaluaciones completas',
+      (WidgetTester tester) async {
+    await tester.runAsync(MiningDatasetService.instance.init);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: Injector.buildProviders(),
+        child: const MaterialApp(home: DashboardScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Evaluaciones completas'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('el acceso de Panorama abre el perfil completo del operador',
@@ -342,11 +369,23 @@ void main() {
     await tester.pumpWidget(
       MultiProvider(
         providers: Injector.buildProviders(),
-        child: const GeoRiskApp(),
+        child: const GeoPredIAApp(),
       ),
     );
-    expect(find.text('Iniciando GeoPreIA...'), findsOneWidget);
+    expect(find.text('Iniciando GeoPredIA...'), findsOneWidget);
+    final initialProgress = tester
+        .widget<LinearProgressIndicator>(
+          find.byType(LinearProgressIndicator),
+        )
+        .value!;
     await tester.pump(const Duration(seconds: 2));
+    final advancedProgress = tester
+        .widget<LinearProgressIndicator>(
+          find.byType(LinearProgressIndicator),
+        )
+        .value!;
+    expect(advancedProgress, greaterThan(initialProgress));
+    expect(advancedProgress, lessThanOrEqualTo(0.9));
     expect(find.byType(MainBottomNav), findsNothing);
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();

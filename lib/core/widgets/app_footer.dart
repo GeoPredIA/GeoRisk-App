@@ -36,7 +36,7 @@ class AppFooter extends StatelessWidget {
                 children: [
                   Text(
                     customMessage ??
-                        'GeoPreIA · Evaluación Inteligente de Riesgos',
+                        'GeoPredIA · Evaluación Inteligente de Riesgos',
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,

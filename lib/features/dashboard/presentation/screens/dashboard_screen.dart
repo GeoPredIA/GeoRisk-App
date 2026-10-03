@@ -25,7 +25,7 @@ import '../widgets/zone_search_bar.dart';
 import '../widgets/zone_list_card.dart';
 import '../widgets/geography_cascade_filter.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
-// Perfil y autenticación directa (sin login previo)
+// Perfil y autenticación directa 
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GeoPreIA',
+        title: const Text('GeoPredIA',
             style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
@@ -92,8 +92,9 @@ class DashboardScreen extends StatelessWidget {
                     delegate: SliverChildListDelegate([
                       // --- Card de introducción ---
                       const Card(
+                        color: AppColors.headerGreen,
                         child: Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(18),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -109,19 +110,23 @@ class DashboardScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 8),
                               SyncStatusChip(
-                                  label: 'SAP HANA Cloud · Sincronizado',
-                                  status: SyncStatus.online),
+                                label: 'SAP HANA Cloud · Sincronizado',
+                                status: SyncStatus.online,
+                              ),
                               SizedBox(height: 12),
                               Text(
                                 'Cada zona, una decisión informada',
                                 style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               SizedBox(height: 6),
                               Text(
                                 'Monitoreo predictivo multivariable geológico, ambiental y social.',
-                                style:
-                                    TextStyle(color: AppColors.textSecondary),
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
                             ],
                           ),
@@ -132,62 +137,81 @@ class DashboardScreen extends StatelessWidget {
                       // --- Grilla de 4 KPI cards (2x2) ---
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final columns = constraints.maxWidth >= 720
-                              ? 4
-                              : (constraints.maxWidth < 240 ? 1 : 2);
-                          final aspectRatio = columns == 1
-                              ? 1.2
-                              : (constraints.maxWidth < 360
-                                  ? 1.1
-                                  : (constraints.maxWidth < 480
-                                      ? 1.2
-                                      : (constraints.maxWidth < 720
-                                          ? 1.65
-                                          : 1.3)));
+                          final columns = constraints.maxWidth < 240 ? 1 : 2;
+                          final cards = <Widget>[
+                            KpiCard(
+                              title: 'Zonas de exploración',
+                              value: '${stats.totalZones}',
+                              footer: Text(
+                                '↑ +${stats.newZonesThisMonth} este mes',
+                                style: const TextStyle(
+                                  color: AppColors.riskLow,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            KpiCard(
+                              title: 'Riesgo global prom.',
+                              value: stats.avgGlobalRisk.toStringAsFixed(1),
+                              suffix: '/100',
+                              footer: Text(
+                                '● ${stats.avgRiskLabel}',
+                                style: const TextStyle(
+                                  color: AppColors.riskMedium,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            KpiCard(
+                              title: 'Pendientes de revisión',
+                              value: '${stats.pendingReviews}',
+                              footer: Text(
+                                '● ${stats.pendingCriticality}',
+                                style: const TextStyle(
+                                  color: AppColors.riskHigh,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            KpiCard(
+                              title: 'Evaluaciones completas',
+                              value: '${stats.completedEvaluations}',
+                              footer: Text(
+                                '+ ${stats.aiConfidence}% conf. IA',
+                                style: const TextStyle(
+                                  color: AppColors.riskLow,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ];
+                          final rowCount =
+                              (cards.length + columns - 1) ~/ columns;
 
-                          return GridView.count(
-                            crossAxisCount: columns,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: aspectRatio,
+                          return Column(
                             children: [
-                              KpiCard(
-                                title: 'Zonas de exploración',
-                                value: '${stats.totalZones}',
-                                footer: Text(
-                                    '↑ +${stats.newZonesThisMonth} este mes',
-                                    style: const TextStyle(
-                                        color: AppColors.riskLow,
-                                        fontSize: 12)),
-                              ),
-                              KpiCard(
-                                title: 'Riesgo global prom.',
-                                value: stats.avgGlobalRisk.toStringAsFixed(1),
-                                suffix: '/100',
-                                footer: Text('● ${stats.avgRiskLabel}',
-                                    style: const TextStyle(
-                                        color: AppColors.riskMedium,
-                                        fontSize: 12)),
-                              ),
-                              KpiCard(
-                                title: 'Pendientes de revisión',
-                                value: '${stats.pendingReviews}',
-                                footer: Text('● ${stats.pendingCriticality}',
-                                    style: const TextStyle(
-                                        color: AppColors.riskHigh,
-                                        fontSize: 12)),
-                              ),
-                              KpiCard(
-                                title: 'Evaluaciones compl.',
-                                value: '${stats.completedEvaluations}',
-                                footer: Text(
-                                    '+ ${stats.aiConfidence}% conf. IA',
-                                    style: const TextStyle(
-                                        color: AppColors.riskLow,
-                                        fontSize: 12)),
-                              ),
+                              for (var row = 0; row < rowCount; row++) ...[
+                                if (row > 0)
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 2),
+                                    child: _MountainDivider(),
+                                  ),
+                                Row(
+                                  children: [
+                                    for (var column = 0;
+                                        column < columns;
+                                        column++) ...[
+                                      if (column > 0) const SizedBox(width: 12),
+                                      Expanded(
+                                        child: row * columns + column <
+                                                cards.length
+                                            ? cards[row * columns + column]
+                                            : const SizedBox.shrink(),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ],
                             ],
                           );
                         },
@@ -264,4 +288,62 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _MountainDivider extends StatelessWidget {
+  const _MountainDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 54,
+      width: double.infinity,
+      child: CustomPaint(painter: _MountainDividerPainter()),
+    );
+  }
+}
+
+class _MountainDividerPainter extends CustomPainter {
+  const _MountainDividerPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final outline = Paint()
+      ..color = AppColors.terrainBrown.withValues(alpha: 0.62)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final distantOutline = Paint()
+      ..color = AppColors.terrainBrown.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final ridge = Path()
+      ..moveTo(0, size.height * 0.82)
+      ..lineTo(size.width * 0.13, size.height * 0.38)
+      ..lineTo(size.width * 0.23, size.height * 0.61)
+      ..lineTo(size.width * 0.4, size.height * 0.13)
+      ..lineTo(size.width * 0.51, size.height * 0.52)
+      ..lineTo(size.width * 0.68, size.height * 0.04)
+      ..lineTo(size.width * 0.82, size.height * 0.47)
+      ..lineTo(size.width * 0.92, size.height * 0.22)
+      ..lineTo(size.width, size.height * 0.53);
+    canvas.drawPath(ridge, outline);
+
+    final distantRidge = Path()
+      ..moveTo(0, size.height * 0.96)
+      ..lineTo(size.width * 0.19, size.height * 0.55)
+      ..lineTo(size.width * 0.31, size.height * 0.78)
+      ..lineTo(size.width * 0.49, size.height * 0.35)
+      ..lineTo(size.width * 0.63, size.height * 0.76)
+      ..lineTo(size.width * 0.8, size.height * 0.3)
+      ..lineTo(size.width, size.height * 0.75);
+    canvas.drawPath(distantRidge, distantOutline);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MountainDividerPainter oldDelegate) => false;
 }

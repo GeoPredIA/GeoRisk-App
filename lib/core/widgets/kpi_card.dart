@@ -31,7 +31,7 @@ class KpiCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -52,7 +52,7 @@ class KpiCard extends StatelessWidget {
                 if (trailingIcon != null) trailingIcon!,
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
@@ -77,7 +77,7 @@ class KpiCard extends StatelessWidget {
               ),
             ),
             if (footer != null) ...[
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Center(child: footer!),
             ],
           ],

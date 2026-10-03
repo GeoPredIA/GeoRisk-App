@@ -32,10 +32,10 @@ class JouleDataAssistant {
     if (_containsAny(query,
         const ['hola', 'buenos dias', 'buenas tardes', 'buenas noches'])) {
       return JouleAnswer(
-        topic: 'GeoPreIA · ${zones.length} zonas',
+        topic: 'GeoPredIA · ${zones.length} zonas',
         text:
             '¡Hola! Puedo consultar cualquiera de las ${zones.length} zonas del dataset, explicar sus puntajes geológico, ambiental y social, revisar sus variables o comparar zonas. Puedes preguntar con el nombre o código, por ejemplo: “¿Qué riesgo tiene ${zones.first.name}?”',
-        sources: ['Dataset local GeoPreIA'],
+        sources: ['Dataset local GeoPredIA'],
       );
     }
 
@@ -49,7 +49,7 @@ class JouleDataAssistant {
         topic: 'Consultas disponibles',
         text:
             'Puedo buscar cualquier zona por nombre, código, departamento o provincia; explicar sus puntajes y variables; revisar su dictamen HITL; resumir el portafolio y ordenar las zonas de mayor o menor riesgo. Si preguntas algo que no aparece en el dataset, te lo indicaré en lugar de inventar datos.',
-        sources: ['Dataset local GeoPreIA'],
+        sources: ['Dataset local GeoPredIA'],
       );
     }
 
@@ -103,7 +103,7 @@ class JouleDataAssistant {
       return const JouleAnswer(
         topic: 'Cómo interpretar los puntajes',
         text:
-            'Los puntajes de GeoPreIA van de 0 a 100 y representan nivel de riesgo, no probabilidad de accidente: 0–39 bajo, 40–69 moderado y 70–100 alto. El global combina las dimensiones geológica, ambiental y social. Úsalos para priorizar revisión; no sustituyen una evaluación profesional ni un dictamen HITL.',
+            'Los puntajes de GeoPredIA van de 0 a 100 y representan nivel de riesgo, no probabilidad de accidente: 0–39 bajo, 40–69 moderado y 70–100 alto. El global combina las dimensiones geológica, ambiental y social. Úsalos para priorizar revisión; no sustituyen una evaluación profesional ni un dictamen HITL.',
         sources: ['Metodología de puntajes local'],
       );
     }
@@ -235,7 +235,7 @@ class JouleDataAssistant {
       text:
           'El dataset contiene ${zones.length} zonas únicas. El riesgo global promedio es ${averageRisk.toStringAsFixed(1)}/100; ${_riskLabel(averageRisk.round())}. $highRisk zonas tienen puntaje alto (70 o más) y $pending aparecen pendientes u observadas en revisión. La zona con mayor puntaje actual es ${highest.first.name} (${highest.first.code}), con ${highest.first.globalScore}/100.',
       sources: const [
-        'Dataset local GeoPreIA',
+        'Dataset local GeoPredIA',
         'Puntajes de riesgo',
         'Estado HITL'
       ],
@@ -249,7 +249,7 @@ class JouleDataAssistant {
     return JouleAnswer(
       topic: topic,
       text: 'Según el puntaje global del dataset:\n$lines',
-      sources: const ['Dataset local GeoPreIA', 'Puntajes globales'],
+      sources: const ['Dataset local GeoPredIA', 'Puntajes globales'],
     );
   }
 
@@ -276,7 +276,7 @@ class JouleDataAssistant {
       topic: 'Comparación de zonas',
       text:
           '$rows\nLos valores comparan los registros disponibles; revisa la fecha y el estado HITL antes de tomar decisiones.',
-      sources: const ['Dataset local GeoPreIA', 'Puntajes Geo · Amb · Soc'],
+      sources: const ['Dataset local GeoPredIA', 'Puntajes Geo · Amb · Soc'],
     );
   }
 
@@ -292,7 +292,7 @@ class JouleDataAssistant {
       topic: topic,
       text:
           'Zonas con los puntajes más altos en esta dimensión:\n$rows\nUn valor alto indica más riesgo y requiere revisar la evidencia de la zona.',
-      sources: const ['Dataset local GeoPreIA', 'Puntajes por dimensión'],
+      sources: const ['Dataset local GeoPredIA', 'Puntajes por dimensión'],
     );
   }
 
@@ -341,7 +341,7 @@ class JouleDataAssistant {
         text:
             'Como orientación general, prioriza verificar la evidencia de campo, revisar por separado los riesgos geológicos, ambientales y sociales, y asignar medidas con responsables y fechas. En el dataset, los casos que conviene revisar primero son: $focus. Las medidas concretas deben validarse con especialistas y con la comunidad; el sistema no reemplaza ese proceso.',
         sources: const [
-          'Dataset local GeoPreIA',
+          'Dataset local GeoPredIA',
           'Revisión humana recomendada'
         ],
       );
@@ -357,7 +357,7 @@ class JouleDataAssistant {
       topic: 'Análisis abierto',
       text:
           'Sobre “$query”: puedo contrastar tu pregunta con el dataset local de ${zones.length} zonas. El riesgo global promedio registrado es ${averageRisk.toStringAsFixed(1)}/100; ${ranked.first.name} (${ranked.first.code}) tiene el puntaje mayor (${ranked.first.globalScore}/100).\n\nNo tengo una fuente local para afirmar datos externos o eventos en tiempo real. Si me indicas una zona, tema o criterio, relaciono la respuesta con sus variables y te digo qué datos respaldan la conclusión.',
-      sources: const ['Dataset local GeoPreIA', 'Resumen de riesgo'],
+      sources: const ['Dataset local GeoPredIA', 'Resumen de riesgo'],
     );
   }
 

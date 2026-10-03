@@ -1,5 +1,5 @@
 name: georisk
-description: "GeoRisk - Evaluación inteligente de riesgos geológicos y socioambientales."
+description: "GeoPredIA - Evaluación inteligente de riesgos geológicos y socioambientales."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -30,3 +30,4 @@ flutter:
 
   assets:
     - assets/data/
+    - assets/images/geopredia_logo.jpg

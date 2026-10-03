@@ -1,4 +1,4 @@
-# 🌍 GeoPredIA (GeoRisk) - Evaluación Inteligente de Riesgos Geológicos y Socioambientales
+# GeoPredIA - Evaluación Inteligente de Riesgos Geológicos y Socioambientales
 
 ##  Contexto y Problema
 

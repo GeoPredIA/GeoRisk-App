@@ -1,7 +1,7 @@
 // =============================================================
 // main.dart
 // -------------------------------------------------------------
-// Punto de entrada de la aplicación GeoRisk.
+// Punto de entrada de la aplicación GeoPredIA.
 // Aquí NO va lógica de negocio ni de pantallas: solo se prepara
 // el entorno (inyección de dependencias) y se arranca la app.
 // =============================================================
@@ -29,7 +29,7 @@ void main() {
     // hijos pueden acceder a ellos con context.watch/context.read).
     MultiProvider(
       providers: providers,
-      child: const GeoRiskApp(),
+      child: const GeoPredIAApp(),
     ),
   );
 }

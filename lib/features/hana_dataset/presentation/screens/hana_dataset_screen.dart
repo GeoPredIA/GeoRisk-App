@@ -17,7 +17,7 @@ class _HanaDatasetScreenState extends State<HanaDatasetScreen> {
       'name': 'GEOPREDIA.ZONES_SPATIAL',
       'title': 'Zonas de Exploración y Polígonos',
       'records': '12 registros',
-      'odataEndpoint': '/odata/v4/GeoRiskService/ZonesSpatial',
+      'odataEndpoint': '/odata/v4/GeoPredIAService/ZonesSpatial',
       'description': 'Entidad espacial principal con geometrías ST_POLYGON (SRID 4326), coordenadas UTM y cuencas.',
       'columns': [
         {'col': 'ZONE_CODE', 'type': 'NVARCHAR(16)', 'pk': true},
@@ -32,7 +32,7 @@ class _HanaDatasetScreenState extends State<HanaDatasetScreen> {
       'name': 'GEOPREDIA.IOT_TELEMETRY',
       'title': 'Telemetría Sensorial en Vivo',
       'records': '1,420 mediciones',
-      'odataEndpoint': '/odata/v4/GeoRiskService/SensorTelemetry',
+      'odataEndpoint': '/odata/v4/GeoPredIAService/SensorTelemetry',
       'description': 'Series temporales de humedad, piezómetros, turbidez hídrica y estaciones meteorológicas vía MQTT/LoRaWAN.',
       'columns': [
         {'col': 'TELEMETRY_ID', 'type': 'BIGINT', 'pk': true},
@@ -47,7 +47,7 @@ class _HanaDatasetScreenState extends State<HanaDatasetScreen> {
       'name': 'GEOPREDIA.HITL_AUDIT_LOGS',
       'title': 'Auditoría HITL y Dictámenes',
       'records': '64 dictámenes',
-      'odataEndpoint': '/odata/v4/GeoRiskService/HitlAuditLogs',
+      'odataEndpoint': '/odata/v4/GeoPredIAService/HitlAuditLogs',
       'description': 'Registro inmutable de revisiones humanas con hash SHA-256 de aprobación en SAP Build Process Automation.',
       'columns': [
         {'col': 'AUDIT_ID', 'type': 'NVARCHAR(36)', 'pk': true},

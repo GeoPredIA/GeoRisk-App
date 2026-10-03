@@ -1,11 +1,11 @@
 {
-    "name": "georisk",
-    "short_name": "georisk",
+    "name": "GeoPredIA",
+    "short_name": "GeoPredIA",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "GeoPredIA - Evaluación inteligente de riesgos geológicos y socioambientales.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

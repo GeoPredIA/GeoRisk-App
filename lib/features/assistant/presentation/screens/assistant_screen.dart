@@ -36,12 +36,12 @@ class _AssistantScreenState extends State<AssistantScreen> {
 
   final List<_AssistantChatMessage> _messages = [
     _AssistantChatMessage(
-      sender: 'Joule · Asistente GeoPreIA',
+      sender: 'Joule · Asistente GeoPredIA',
       text:
           'Hola. Puedo consultar las zonas del dataset local, explicar sus puntajes geológicos, ambientales y sociales, revisar sus dictámenes HITL y comparar riesgos. Pregunta por el nombre o código de cualquier zona, o haz una consulta general.',
       isUser: false,
       timestamp: DateTime.now(),
-      agentTag: 'Datos locales GeoPreIA',
+      agentTag: 'Datos locales GeoPredIA',
       sources: ['Dataset minero local'],
     ),
   ];
@@ -87,7 +87,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
       _isResponding = false;
       _messages.add(
         _AssistantChatMessage(
-          sender: 'Joule · GeoPreIA',
+          sender: 'Joule · GeoPredIA',
           text: answer.text,
           isUser: false,
           timestamp: DateTime.now(),
@@ -151,7 +151,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
                           ),
                         ),
                         Text(
-                          'Consultas sobre el dataset GeoPreIA',
+                          'Consultas sobre el dataset GeoPredIA',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -314,7 +314,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
           const Padding(
             padding: EdgeInsets.fromLTRB(12, 0, 12, 6),
             child: Text(
-              'Joule · Respuestas basadas en el dataset local GeoPreIA',
+              'Joule · Respuestas basadas en el dataset local GeoPredIA',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 10, color: AppColors.textMuted),
             ),

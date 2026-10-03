@@ -13,6 +13,8 @@ class AppColors {
   static const Color sidebarDark = Color(0xFF0C2B20);   // Sidebar oscuro
   static const Color background = Color(0xFFF7F3EC);    // Crema de fondo
   static const Color surface = Color(0xFFFFFFFF);       // Cards blancas
+  static const Color headerGreen = Color(0xFFE7EFE5);   // Verde salvia suave
+  static const Color terrainBrown = Color(0xFFA77A50);  // Tierra cálida
 
   static const Color riskHigh = Color(0xFFE0623B);      // Naranja/rojo - ALTO
   static const Color riskHighBg = Color(0xFFFFEBEE);    // Fondo suave ALTO
@@ -45,10 +47,13 @@ class AppTheme {
         surface: AppColors.surface,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: AppColors.headerGreen,
+        foregroundColor: AppColors.primaryDark,
         elevation: 0,
         centerTitle: false,
+        shape: Border(
+          bottom: BorderSide(color: Color(0xFFD5DFD1), width: 1),
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
