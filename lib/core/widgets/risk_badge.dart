@@ -1,14 +1,9 @@
 // =============================================================
-// core/widgets/risk_badge.dart
-// -------------------------------------------------------------
-// El chip "● ALTO 74/100" que se repite en:
+// El chip " ALTO 74/100" que se repite en:
 //   - dashboard (lista de zonas)
 //   - zone_detail (encabezado)
 //   - multiagent_analysis (cada agente)
 //   - review_approval (cada tarea)
-//
-// Por eso vive en core/widgets/ y NO dentro de un feature:
-// es un componente 100% genérico y reutilizable.
 // =============================================================
 
 import 'package:flutter/material.dart';

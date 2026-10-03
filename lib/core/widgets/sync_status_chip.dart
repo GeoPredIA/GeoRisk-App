@@ -1,7 +1,5 @@
 // =============================================================
-// core/widgets/sync_status_chip.dart
-// -------------------------------------------------------------
-// El chip "● HANA Cloud" / "● Sincronizado" que aparece en varios
+// El chip " HANA Cloud" / " Sincronizado" que aparece en varios
 // headers (Panorama, Integración). Indica en vivo si un sistema
 // SAP está conectado, en cola, o desconectado.
 // =============================================================
