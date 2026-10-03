@@ -2,8 +2,6 @@
 // main.dart
 // -------------------------------------------------------------
 // Punto de entrada de la aplicación GeoPredIA.
-// Aquí NO va lógica de negocio ni de pantallas: solo se prepara
-// el entorno (inyección de dependencias) y se arranca la app.
 // =============================================================
 
 import 'package:flutter/material.dart';

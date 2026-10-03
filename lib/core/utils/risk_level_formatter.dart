@@ -25,7 +25,7 @@ class RiskLevelFormatter {
     return RiskLevel.low;
   }
 
-  /// Etiqueta en español, tal como aparece en los mockups.
+  /// Etiqueta en español.
   static String labelFor(RiskLevel level) {
     switch (level) {
       case RiskLevel.high:
