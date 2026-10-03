@@ -1,6 +1,4 @@
 // =============================================================
-// core/utils/risk_level_formatter.dart
-// -------------------------------------------------------------
 // Convierte un puntaje numérico (0-100) en su nivel de riesgo
 // (ALTO / MEDIO / BAJO) y el color correspondiente, según los
 // umbrales vistos en tus mockups:
@@ -27,7 +25,7 @@ class RiskLevelFormatter {
     return RiskLevel.low;
   }
 
-  /// Etiqueta en español, tal como aparece en los mockups.
+  /// Etiqueta en español.
   static String labelFor(RiskLevel level) {
     switch (level) {
       case RiskLevel.high:

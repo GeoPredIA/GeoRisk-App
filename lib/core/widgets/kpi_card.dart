@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class KpiCard extends StatelessWidget {
-  final String title;          // "Zonas de exploración"
-  final String value;          // "42"
-  final String? suffix;        // "/100" en el caso del riesgo promedio
-  final Widget? trailingIcon;  // ícono pequeño arriba a la derecha
-  final Widget? footer;        // texto pequeño abajo, ej: "↑ +3 este mes"
+  final String title; // "Zonas de exploración"
+  final String value; // "42"
+  final String? suffix; // "/100" en el caso del riesgo promedio
+  final Widget? trailingIcon; // ícono pequeño arriba a la derecha
+  final Widget? footer; // texto pequeño abajo, ej: "↑ +3 este mes"
 
   const KpiCard({
     super.key,
@@ -27,18 +27,22 @@ class KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = MediaQuery.sizeOf(context).width < 480;
+
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
+                Flexible(
                   child: Text(
                     title,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 13,
@@ -50,13 +54,14 @@ class KpiCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             RichText(
+              textAlign: TextAlign.center,
               text: TextSpan(
                 children: [
                   TextSpan(
                     text: value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
-                      fontSize: 26,
+                      fontSize: isCompact ? 22 : 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -72,8 +77,8 @@ class KpiCard extends StatelessWidget {
               ),
             ),
             if (footer != null) ...[
-              const SizedBox(height: 6),
-              footer!,
+              const SizedBox(height: 8),
+              Center(child: footer!),
             ],
           ],
         ),

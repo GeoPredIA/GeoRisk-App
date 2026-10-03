@@ -1,26 +1,15 @@
 // =============================================================
-// core/network/interceptors/auth_interceptor.dart
-// -------------------------------------------------------------
 // Interceptor de Dio que agrega automáticamente el token OAuth2
-// (requerido por SAP BTP) a cada petición, sin que cada
-// datasource tenga que escribirlo manualmente.
-//
-// NOTA: la lógica real de obtención/renovación del token
-// (contra SAP Identity Authentication / XSUAA) se completa
-// cuando tengas las credenciales del ambiente Trial. Por ahora
-// queda el esqueleto documentado.
 // =============================================================
 
 import 'package:dio/dio.dart';
 
 class AuthInterceptor extends Interceptor {
-  // TODO: reemplazar por un TokenStorage real (ej. flutter_secure_storage)
-  // una vez que tengas el flujo de login contra SAP configurado.
   String? _cachedToken;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Si aún no hay token en caché, se solicita uno nuevo.
+    
     _cachedToken ??= await _fetchToken();
 
     options.headers['Authorization'] = 'Bearer $_cachedToken';

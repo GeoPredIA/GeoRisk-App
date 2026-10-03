@@ -1,9 +1,7 @@
 // =============================================================
 // features/dashboard/presentation/widgets/zone_list_card.dart
 // -------------------------------------------------------------
-// La card individual "Quellaveco Norte · ALTO 74/100" con las
-// 3 mini-columnas Geo/Amb/Soc, vista en la Imagen 2. Al tocarla,
-// navega al detalle de la zona (feature zone_detail).
+// Card interactiva de cada zona de exploración minera del dataset.
 // =============================================================
 
 import 'package:flutter/material.dart';
@@ -18,10 +16,27 @@ class ZoneListCard extends StatelessWidget {
 
   const ZoneListCard({super.key, required this.zone});
 
+  Color _getMineralColor(String mineral) {
+    final m = mineral.toLowerCase();
+    if (m.contains('cobre')) return const Color(0xFFD35400);
+    if (m.contains('oro')) return const Color(0xFFD4AC0D);
+    if (m.contains('plata')) return const Color(0xFF5D6D7E);
+    if (m.contains('zinc')) return const Color(0xFF2E86C1);
+    if (m.contains('hierro')) return const Color(0xFF78281F);
+    return AppColors.primaryDark;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final mineralColor = _getMineralColor(zone.mineral);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.borderSubtle, width: 1.1),
+      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () => AppRoutes.goToZoneDetail(context, zoneCode: zone.code),
@@ -30,49 +45,137 @@ class ZoneListCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tag "Inspección Activa" (solo si aplica)
-              if (zone.hasActiveInspection)
-                Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppColors.riskLow.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    '● Inspección Activa',
-                    style: TextStyle(color: AppColors.riskLow, fontSize: 11, fontWeight: FontWeight.w600),
-                  ),
-                ),
-
-              // Nombre de la zona + badge de riesgo
+              // Tags superiores: Mineral + Estado de Inspección
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Text(
-                      zone.name,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: mineralColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                          color: mineralColor.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.diamond_outlined,
+                            size: 12, color: mineralColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          zone.mineral,
+                          style: TextStyle(
+                            color: mineralColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  const SizedBox(width: 8),
+
+                  if (zone.hasActiveInspection)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.riskHigh.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        '● En Revisión HITL',
+                        style: TextStyle(
+                            color: AppColors.riskHigh,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+
+                  const Spacer(),
+                  // Conteo de evaluaciones históricas registradas en el dataset
+                  Text(
+                    '${zone.totalEvaluaciones} evals.',
+                    style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Nombre de la zona + Badge de riesgo
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          zone.name,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${zone.region} · Código: ${zone.code}',
+                          style: const TextStyle(
+                              color: AppColors.textSecondary, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   RiskBadge(score: zone.globalScore),
                 ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                '${zone.region} · ${zone.code}',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-              ),
-              const SizedBox(height: 12),
 
-              // Las 3 mini-columnas Geo / Amb / Soc
+              if (zone.empresa.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(Icons.business,
+                        size: 13, color: AppColors.textSecondary),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '${zone.empresa} (${zone.fase})',
+                        style: const TextStyle(
+                            fontSize: 12, color: AppColors.textSecondary),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              const SizedBox(height: 14),
+
+              // Las 3 mini-columnas Geo / Amb / Soc con barra sutil
               Row(
                 children: [
-                  _MiniScore(label: 'Geo', value: zone.geoScore),
+                  _MiniScore(
+                    label: 'Geológico',
+                    value: zone.geoScore,
+                    accentColor: const Color(0xFF8D6E63),
+                  ),
                   const SizedBox(width: 8),
-                  _MiniScore(label: 'Amb', value: zone.envScore),
+                  _MiniScore(
+                    label: 'Ambiental',
+                    value: zone.envScore,
+                    accentColor: const Color(0xFF2E7D32),
+                  ),
                   const SizedBox(width: 8),
-                  _MiniScore(label: 'Soc', value: zone.socialScore),
+                  _MiniScore(
+                    label: 'Social',
+                    value: zone.socialScore,
+                    accentColor: const Color(0xFFE65100),
+                  ),
                 ],
               ),
             ],
@@ -83,28 +186,64 @@ class ZoneListCard extends StatelessWidget {
   }
 }
 
-/// Widget privado (solo se usa dentro de este archivo) para cada
-/// una de las 3 mini-columnas de puntaje.
 class _MiniScore extends StatelessWidget {
   final String label;
   final int value;
+  final Color accentColor;
 
-  const _MiniScore({required this.label, required this.value});
+  const _MiniScore({
+    required this.label,
+    required this.value,
+    required this.accentColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.circular(10),
+          border:
+              Border.all(color: AppColors.borderSubtle.withValues(alpha: 0.6)),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-            const SizedBox(height: 2),
-            Text('$value', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Text(
+                  '$value',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: accentColor),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: (value / 100.0).clamp(0.0, 1.0),
+                minHeight: 4,
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+              ),
+            ),
           ],
         ),
       ),

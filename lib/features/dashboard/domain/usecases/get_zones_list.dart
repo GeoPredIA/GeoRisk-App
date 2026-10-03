@@ -1,9 +1,7 @@
 // =============================================================
 // features/dashboard/domain/usecases/get_zones_list.dart
 // -------------------------------------------------------------
-// Caso de uso: obtener la lista de zonas, aplicando el filtro de
-// nivel de riesgo (Todos/Alto/Medio/Bajo) y el texto de búsqueda
-// que ves en la Imagen 2 de tus mockups.
+// Caso de uso: obtener la lista de zonas mineras con filtros.
 // =============================================================
 
 import '../entities/zone_summary.dart';
@@ -14,7 +12,19 @@ class GetZonesList {
 
   const GetZonesList(this._repository);
 
-  Future<List<ZoneSummary>> call({String? filterLevel, String? searchQuery}) {
-    return _repository.getZones(filterLevel: filterLevel, searchQuery: searchQuery);
+  Future<List<ZoneSummary>> call({
+    String? filterLevel,
+    String? searchQuery,
+    String? region,
+    String? province,
+    String? district,
+  }) {
+    return _repository.getZones(
+      filterLevel: filterLevel,
+      searchQuery: searchQuery,
+      region: region,
+      province: province,
+      district: district,
+    );
   }
 }

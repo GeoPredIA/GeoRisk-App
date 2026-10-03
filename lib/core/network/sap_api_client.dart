@@ -1,13 +1,9 @@
 // =============================================================
-// core/network/sap_api_client.dart
-// -------------------------------------------------------------
 // Cliente HTTP único, compartido por TODOS los datasources de
 // TODOS los features. Internamente usa Dio (paquete de terceros)
 // y le agrega el AuthInterceptor para que cada petición lleve
 // el token de SAP automáticamente.
-//
-// Ningún datasource debería crear su propio Dio: todos reciben
-// esta clase inyectada (ver app/di/injector.dart).
+
 // =============================================================
 
 import 'package:dio/dio.dart';

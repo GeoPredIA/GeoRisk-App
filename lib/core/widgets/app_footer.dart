@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class AppFooter extends StatelessWidget {
@@ -10,9 +10,9 @@ class AppFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: const Border(
+        border: Border(
           top: BorderSide(color: AppColors.borderSubtle, width: 1),
         ),
       ),
@@ -35,7 +35,8 @@ class AppFooter extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    customMessage ?? 'GeoPredIA · Evaluación Inteligente de Riesgos',
+                    customMessage ??
+                        'GeoPredIA · Evaluación Inteligente de Riesgos',
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,

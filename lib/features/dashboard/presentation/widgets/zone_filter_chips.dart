@@ -30,31 +30,27 @@ class ZoneFilterChips extends StatelessWidget {
       'BAJO': 'Bajo',
     };
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: options.entries.map((entry) {
-          final isSelected = activeFilter == entry.key;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(entry.value),
-              selected: isSelected,
-              onSelected: (_) => onFilterChanged(entry.key),
-              selectedColor: AppColors.primaryDark,
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-              backgroundColor: AppColors.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: const BorderSide(color: AppColors.borderSubtle),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: options.entries.map((entry) {
+        final isSelected = activeFilter == entry.key;
+        return ChoiceChip(
+          label: Text(entry.value),
+          selected: isSelected,
+          onSelected: (_) => onFilterChanged(entry.key),
+          selectedColor: AppColors.primaryDark,
+          labelStyle: TextStyle(
+            color: isSelected ? Colors.white : AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: AppColors.borderSubtle),
+          ),
+        );
+      }).toList(),
     );
   }
 }
