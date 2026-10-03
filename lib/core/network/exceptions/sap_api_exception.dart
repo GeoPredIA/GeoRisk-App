@@ -1,6 +1,4 @@
 // =============================================================
-// core/network/exceptions/sap_api_exception.dart
-// -------------------------------------------------------------
 // Excepción propia para errores al comunicarse con cualquier
 // servicio SAP. Tenerla tipada (en vez de usar Exception genérica)
 // permite que la UI muestre mensajes específicos según el caso
