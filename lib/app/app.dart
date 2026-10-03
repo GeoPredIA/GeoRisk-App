@@ -2,8 +2,6 @@
 // app/app.dart
 // -------------------------------------------------------------
 // Widget raíz de la aplicación GeoPredIA.
-// Inicializa MaterialApp y arranca directamente en el SplashScreen
-// sin requerir credenciales ni login al usuario.
 // =============================================================
 
 import 'package:flutter/material.dart';

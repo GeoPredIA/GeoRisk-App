@@ -42,9 +42,6 @@ class Injector {
         ),
       ),
 
-      // A medida que construyas zone_detail, multiagent_analysis,
-      // iot_sentinel, review_approval e integration, agregas aquí
-      // su propio ChangeNotifierProvider siguiendo el mismo patrón.
     ];
   }
 }

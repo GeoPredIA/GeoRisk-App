@@ -32,7 +32,7 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.textContaining('${firstZone.code} - ${firstZone.name}'),
         findsOneWidget);
-  });
+  }); 
 
   testWidgets('el detalle de zona presenta nomenclatura legible',
       (WidgetTester tester) async {

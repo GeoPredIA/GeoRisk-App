@@ -1,13 +1,7 @@
 // =============================================================
-// app/routes/app_router.dart
-// -------------------------------------------------------------
 // Centraliza los nombres de ruta y la navegación hacia pantallas
-// que NO forman parte de las 5 pestañas principales (por ejemplo,
-// el detalle de una zona, al que se llega tocando una card).
-//
-// Por qué existe: si mañana cambias de Navigator 1.0 a go_router
-// o a otra librería, solo tocas este archivo — las pantallas no
-// deberían saber "cómo" se navega, solo "a dónde".
+// que NO forman parte de las 5 pestañas principales por ejemplo,
+// el detalle de una zona, al que se llega tocando una card.
 // =============================================================
 
 import 'package:flutter/material.dart';
