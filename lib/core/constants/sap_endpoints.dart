@@ -1,23 +1,21 @@
 // =============================================================
 // core/constants/sap_endpoints.dart
 // -------------------------------------------------------------
-// URLs base de cada servicio SAP que consume la app.
-// Centralizarlas aquí permite cambiar fácilmente entre el
-// ambiente Trial del hackathon y un ambiente productivo,
-// sin buscar y reemplazar URLs por todo el proyecto.
+// URLs de la API GeoPredIA desplegada en SAP BTP y de los servicios SAP
+// enlazados o configurados por la app.
+// Centralizarlas aquí permite cambiar el backend por ambiente sin
+// buscar y reemplazar URLs por todo el proyecto.
 //
-// IMPORTANTE: estos son valores de EJEMPLO. Reemplázalos por
-// las URLs reales que te entregue NTT DATA / SAP BTP Trial.
-// Nunca subas claves/API keys reales a un repositorio público:
-// usa variables de entorno (--dart-define) en su lugar.
+// La URL por defecto apunta al backend desplegado. Para usar otro ambiente,
+// configura `--dart-define=GEOPREDIA_API_URL=https://...`.
+// Nunca incluyas claves/API keys reales en el repositorio.
 // =============================================================
 
 class SapEndpoints {
   SapEndpoints._();
 
-  // --- SAP HANA Cloud (dataset de zonas, vía OData) ---
-  /// API desplegada en SAP BTP. Se puede sustituir por ambiente con
-  /// `--dart-define=GEOPREDIA_API_URL=https://...` sin recompilar código.
+  // --- API GeoPredIA en SAP BTP (datos y asistente) ---
+  /// El cliente Flutter consume esta API; no se conecta directamente a HANA.
   static const String backendBaseUrl = String.fromEnvironment(
     'GEOPREDIA_API_URL',
     defaultValue:

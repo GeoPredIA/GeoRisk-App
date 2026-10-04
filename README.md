@@ -18,21 +18,21 @@ El prototipo funcional implementado incluye las siguientes vistas y capacidades 
 
 4. **Revisión Humana:** Bandeja de pendientes y registro formal de decisiones (Aprobar, Observar, Rechazar) con trazabilidad completa de quién revisó y el sustento correspondiente.
 
-5. **Asistente (Conversacional / SAP Joule):** Simulación de interfaz conversacional para consultar en lenguaje natural factores de riesgo, resúmenes y datos faltantes de cualquier zona de exploración.
+5. **Asistente conversacional:** Envía consultas a la API GeoPredIA desplegada en SAP BTP. Si el backend o la red no están disponibles, usa reglas locales con el dataset de respaldo; esto no implica que el agente nativo de SAP Joule esté activo.
 
-6. **Dataset HANA:** Acceso estructurado a las fuentes base y variables del reto.
+6. **Datos de zonas:** El dashboard consulta la API GeoPredIA en SAP BTP. El dataset incluido en la app se conserva como respaldo para trabajar sin conexión.
 
 ## 🛠️ Arquitectura Técnica SAP & Stack Tecnológico
 
-La solución está diseñada sobre una arquitectura empresarial híbrida:
+La app Flutter consume el backend GeoPredIA desplegado en SAP BTP. La conexión activa no es directa desde Flutter a SAP HANA Cloud: el backend expone la API que usa la aplicación.
 
-* **Capa de Datos:** `SAP HANA Cloud` — Fuente central del dataset sintético con variables geológicas, ambientales, sociales e históricas.
+* **API activa:** `GET /api/zones` carga las zonas desde el backend BTP; el asistente usa `POST /api/assistant/query`.
 
-* **Capa Analítica:** `SAP Analytics Cloud (SAC)` — Scoring, KPIs de riesgo, rankings y comparaciones avanzadas.
+* **Analítica:** La URL de una Story de `SAP Analytics Cloud (SAC)` está configurada como referencia; la app no la abre actualmente desde sus pantallas.
 
-* **Capa de Proceso:** `SAP Build Process Automation` — Flujos de revisión, formularios de aprobación y trazabilidad de decisiones humanas.
+* **Procesos y portal:** Las rutas de integración con `SAP Build Process Automation` y las URL de `SAP Build Work Zone` están documentadas/configuradas; no todas tienen llamadas o navegación activa desde Flutter.
 
-* **Capa de Experiencia e IA:** `SAP Build Work Zone (standard edition)` y `SAP Joule / Joule Studio` (asistente conversacional).
+* **Autenticación:** El interceptor OAuth de la app sigue siendo provisional. Consulta [SAP_INTEGRATIONS.md](SAP_INTEGRATIONS.md) para ver el alcance y cómo comprobar la conexión.
 
 * **Frontend / Prototipo Interactivo:** Desarrollado íntegramente en **Flutter & Dart** para la ejecución local multiplataforma de demostración.
 
