@@ -1,0 +1,11 @@
+applications:
+  - name: georisk-app-ac374882u14
+    memory: 128M
+    disk_quota: 512M
+    instances: 1
+    path: build/web
+    buildpacks:
+      - staticfile_buildpack
+    routes:
+      - route: georisk-app-ac374882u14.cfapps.us10-001.hana.ondemand.com
+
