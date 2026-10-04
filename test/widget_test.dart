@@ -4,7 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:georisk/app/app.dart';
 import 'package:georisk/app/di/injector.dart';
 import 'package:georisk/app/navigation/main_bottom_nav.dart';
+import 'package:georisk/core/network/exceptions/sap_api_exception.dart';
+import 'package:georisk/core/network/sap_api_client.dart';
 import 'package:georisk/core/widgets/kpi_card.dart';
+import 'package:georisk/features/dashboard/data/datasources/dashboard_remote_datasource.dart';
 import 'package:georisk/features/dashboard/data/services/mining_dataset_service.dart';
 import 'package:georisk/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:georisk/features/dashboard/presentation/widgets/zone_list_card.dart';
@@ -17,6 +20,43 @@ import 'package:georisk/features/review_approval/presentation/screens/review_inb
 import 'package:georisk/features/zone_detail/presentation/screens/zone_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class _UnavailableSapApiClient extends SapApiClient {
+  @override
+  Future<dynamic> getJson(
+    String url, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    throw SapApiException.connection();
+  }
+
+  @override
+  Future<Map<String, dynamic>> post(
+    String url, {
+    required Map<String, dynamic> body,
+  }) async {
+    throw SapApiException.connection();
+  }
+}
+
+class _CountingSapApiClient extends SapApiClient {
+  _CountingSapApiClient(this.zones);
+
+  final List<Map<String, dynamic>> zones;
+  int requestCount = 0;
+
+  @override
+  Future<dynamic> getJson(
+    String url, {
+    Map<String, dynamic>? queryParams,
+  }) async {
+    requestCount++;
+    return zones;
+  }
+}
+
+List<ChangeNotifierProvider> _buildTestProviders() =>
+    Injector.buildProviders(sapApiClient: _UnavailableSapApiClient());
 
 void main() {
   testWidgets('el selector de Multiagentes acepta los códigos del dataset',
@@ -32,7 +72,7 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.textContaining('${firstZone.code} - ${firstZone.name}'),
         findsOneWidget);
-  }); 
+  });
 
   testWidgets('el detalle de zona presenta nomenclatura legible',
       (WidgetTester tester) async {
@@ -71,26 +111,68 @@ void main() {
     await tester.runAsync(MiningDatasetService.instance.init);
     final zones = MiningDatasetService.instance.allZones;
     expect(zones, isNotEmpty);
-    const assistant = JouleDataAssistant();
+    final assistant = JouleDataAssistant(
+      apiClient: _UnavailableSapApiClient(),
+    );
 
     for (final zone in zones) {
-      final answer = assistant.answer('Resume la zona ${zone.code}');
+      final answer = await assistant.answer('Resume la zona ${zone.code}');
       expect(answer.text, contains(zone.name), reason: zone.code);
     }
 
     final firstZone = zones.first;
     final secondZone = zones.last;
-    final comparison = assistant.answer(
+    final comparison = await assistant.answer(
       'Compara ${firstZone.code} con ${secondZone.code}',
     );
     expect(comparison.text, contains(firstZone.name));
     expect(comparison.text, contains(secondZone.name));
 
-    final openQuestion = assistant.answer(
+    final openQuestion = await assistant.answer(
       '¿Cómo puedo priorizar una revisión ambiental?',
     );
     expect(openQuestion.topic, contains('ambiental'));
     expect(openQuestion.sources, contains('Dataset local GeoPredIA'));
+  });
+
+  testWidgets('la búsqueda SAP filtra metadatos localmente y reutiliza zonas',
+      (WidgetTester tester) async {
+    await tester.runAsync(MiningDatasetService.instance.init);
+    final localZone = MiningDatasetService.instance.allZones.first;
+    final client = _CountingSapApiClient([
+      {
+        'id': localZone.code,
+        'name': localZone.name,
+        'region': localZone.region,
+        'record_count': localZone.totalEvaluations,
+        'latest_evaluation': {
+          'global_risk': localZone.globalScore,
+          'subindices': {
+            'geological': localZone.geoScore,
+            'environmental': localZone.envScore,
+            'social': localZone.socialScore,
+          },
+          'review_status': 'pending',
+        },
+      },
+    ]);
+    final datasource = DashboardRemoteDatasource(client);
+
+    final filtered = await datasource.fetchZones(
+      region: localZone.region,
+      province: localZone.provincia,
+      district: localZone.distrito,
+    );
+    expect(filtered.map((zone) => zone.code), contains(localZone.code));
+    expect(filtered.single.totalEvaluaciones, localZone.totalEvaluations);
+    expect(filtered.single.hasActiveInspection, isTrue);
+
+    final searched = await datasource.fetchZones(
+      searchQuery: localZone.empresaOperadora,
+    );
+    expect(searched.map((zone) => zone.code), contains(localZone.code));
+    await datasource.fetchStats();
+    expect(client.requestCount, 1);
   });
 
   testWidgets('Joule responde dentro de una pantalla móvil',
@@ -102,7 +184,15 @@ void main() {
     await tester.runAsync(MiningDatasetService.instance.init);
 
     final zone = MiningDatasetService.instance.allZones.first;
-    await tester.pumpWidget(const MaterialApp(home: AssistantScreen()));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: AssistantScreen(
+          assistant: JouleDataAssistant(
+            apiClient: _UnavailableSapApiClient(),
+          ),
+        ),
+      ),
+    );
     expect(tester.takeException(), isNull);
     await tester.enterText(
         find.byType(TextField), 'Riesgo global de ${zone.code}');
@@ -125,7 +215,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       await tester.pumpWidget(
         MultiProvider(
-          providers: Injector.buildProviders(),
+          providers: _buildTestProviders(),
           child: const MaterialApp(home: DashboardScreen()),
         ),
       );
@@ -195,7 +285,7 @@ void main() {
     await tester.runAsync(MiningDatasetService.instance.init);
     await tester.pumpWidget(
       MultiProvider(
-        providers: Injector.buildProviders(),
+        providers: _buildTestProviders(),
         child: const MaterialApp(home: DashboardScreen()),
       ),
     );
@@ -211,7 +301,7 @@ void main() {
     await tester.runAsync(MiningDatasetService.instance.init);
     await tester.pumpWidget(
       MultiProvider(
-        providers: Injector.buildProviders(),
+        providers: _buildTestProviders(),
         child: const MaterialApp(home: DashboardScreen()),
       ),
     );
@@ -307,7 +397,7 @@ void main() {
 
     await tester.pumpWidget(
       MultiProvider(
-        providers: Injector.buildProviders(),
+        providers: _buildTestProviders(),
         child: const MaterialApp(home: MainBottomNav()),
       ),
     );
@@ -368,7 +458,7 @@ void main() {
     await tester.runAsync(MiningDatasetService.instance.init);
     await tester.pumpWidget(
       MultiProvider(
-        providers: Injector.buildProviders(),
+        providers: _buildTestProviders(),
         child: const GeoPredIAApp(),
       ),
     );

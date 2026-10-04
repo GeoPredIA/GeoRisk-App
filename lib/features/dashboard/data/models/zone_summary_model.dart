@@ -5,6 +5,7 @@
 // =============================================================
 
 import '../../domain/entities/zone_summary.dart';
+import '../services/mining_dataset_service.dart';
 
 class ZoneSummaryModel extends ZoneSummary {
   const ZoneSummaryModel({
@@ -52,14 +53,18 @@ class ZoneSummaryModel extends ZoneSummary {
       tipoYacimiento: json['TipoYacimiento'] as String? ?? 'Pórfido',
       superficieHa: (json['SuperficieHa'] as num?)?.toDouble() ?? 1000.0,
       estadoRevision: json['EstadoRevision'] as String? ?? 'Revisada',
-      decisionEspecialista: json['DecisionEspecialista'] as String? ?? 'Continuar monitoreo',
+      decisionEspecialista:
+          json['DecisionEspecialista'] as String? ?? 'Continuar monitoreo',
       comentarioRevision: json['ComentarioRevision'] as String? ?? '',
       totalEvaluaciones: (json['TotalEvaluaciones'] as num?)?.toInt() ?? 1,
     );
   }
 
   /// Traduce la respuesta del backend GeoPredIA desplegado en SAP BTP.
-  factory ZoneSummaryModel.fromGeoPrediaApi(Map<String, dynamic> json) {
+  factory ZoneSummaryModel.fromGeoPrediaApi(
+    Map<String, dynamic> json, {
+    MiningZoneRecord? localRecord,
+  }) {
     final evaluation = json['latest_evaluation'] is Map
         ? Map<String, dynamic>.from(json['latest_evaluation'] as Map)
         : <String, dynamic>{};
@@ -71,16 +76,36 @@ class ZoneSummaryModel extends ZoneSummary {
     return ZoneSummaryModel(
       code: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
-      region: json['region']?.toString() ?? '',
+      region: localRecord == null
+          ? json['region']?.toString() ?? ''
+          : '${localRecord.region} · ${localRecord.provincia} · ${localRecord.distrito}',
       globalScore: score(evaluation['global_risk']),
       geoScore: score(subindices['geological']),
       envScore: score(subindices['environmental']),
       socialScore: score(subindices['social']),
       hasActiveInspection:
-          evaluation['review_status']?.toString().toLowerCase() == 'pending',
-      departamento: json['region']?.toString() ?? '',
+          evaluation['review_status']?.toString().toLowerCase() == 'pending' ||
+              localRecord?.estadoRevision.toLowerCase().contains('revision') ==
+                  true ||
+              localRecord?.estadoRevision.toLowerCase().contains('observada') ==
+                  true ||
+              localRecord?.metodoEvaluacion.toLowerCase().contains('campo') ==
+                  true,
+      departamento: localRecord?.region ?? json['region']?.toString() ?? '',
+      provincia: localRecord?.provincia ?? '',
+      distrito: localRecord?.distrito ?? '',
+      mineral: localRecord?.mineralPrincipal ?? 'Cobre',
+      empresa: localRecord?.empresaOperadora ?? 'Operadora Minera',
+      fase: localRecord?.faseExploracion ?? 'Exploración',
+      altitud: localRecord?.altitudMsnm ?? 3500.0,
+      tipoYacimiento: localRecord?.tipoYacimiento ?? 'Pórfido',
+      superficieHa: localRecord?.superficieHa ?? 1000.0,
       estadoRevision: evaluation['review_status']?.toString() ?? 'Pendiente',
-      totalEvaluaciones: evaluation.isEmpty ? 0 : 1,
+      decisionEspecialista:
+          localRecord?.decisionEspecialista ?? 'Continuar monitoreo',
+      comentarioRevision: localRecord?.comentarioRevision ?? '',
+      totalEvaluaciones: (json['record_count'] as num?)?.toInt() ??
+          (evaluation.isEmpty ? 0 : 1),
     );
   }
 }

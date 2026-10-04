@@ -24,12 +24,14 @@ import '../../features/dashboard/presentation/providers/dashboard_provider.dart'
 class Injector {
   /// Devuelve la lista de providers que se inyectan en el MultiProvider
   /// del main.dart. Cada feature nuevo agrega su propio bloque aquí.
-  static List<ChangeNotifierProvider> buildProviders() {
+  static List<ChangeNotifierProvider> buildProviders({
+    SapApiClient? sapApiClient,
+  }) {
     // Cliente HTTP compartido por todos los datasources que hablan con SAP.
-    final sapApiClient = SapApiClient();
+    final apiClient = sapApiClient ?? SapApiClient();
 
     // ---------- Dashboard ----------
-    final dashboardDatasource = DashboardRemoteDatasource(sapApiClient);
+    final dashboardDatasource = DashboardRemoteDatasource(apiClient);
     final dashboardRepository = DashboardRepositoryImpl(dashboardDatasource);
     final getDashboardStats = GetDashboardStats(dashboardRepository);
     final getZonesList = GetZonesList(dashboardRepository);

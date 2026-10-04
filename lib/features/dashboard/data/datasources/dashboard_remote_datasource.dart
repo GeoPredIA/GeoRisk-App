@@ -15,7 +15,12 @@ import '../services/mining_dataset_service.dart';
 class DashboardRemoteDatasource {
   final SapApiClient _apiClient;
 
-  const DashboardRemoteDatasource(this._apiClient);
+  DashboardRemoteDatasource(this._apiClient);
+
+  static const _remoteCacheDuration = Duration(minutes: 2);
+  List<ZoneSummaryModel>? _remoteZonesCache;
+  DateTime? _remoteZonesCachedAt;
+  Future<List<ZoneSummaryModel>>? _remoteZonesRequest;
 
   Future<DashboardStatsModel> fetchStats() async {
     final remote = await _fetchRemoteZones();
@@ -85,17 +90,26 @@ class DashboardRemoteDatasource {
   }) async {
     final remote = await _fetchRemoteZones();
     if (remote.isNotEmpty) {
-      final query = (searchQuery ?? '').toLowerCase();
+      final query = (searchQuery ?? '').trim().toLowerCase();
       return remote.where((zone) {
         final level = _levelLabel(zone.globalScore);
         final matchesLevel = filterLevel == null ||
             filterLevel == 'TODOS' ||
             filterLevel == level;
+        final matchesRegion = region == null || zone.departamento == region;
+        final matchesProvince = province == null || zone.provincia == province;
+        final matchesDistrict = district == null || zone.distrito == district;
         final matchesSearch = query.isEmpty ||
             zone.name.toLowerCase().contains(query) ||
             zone.code.toLowerCase().contains(query) ||
-            zone.region.toLowerCase().contains(query);
-        return matchesLevel && matchesSearch;
+            zone.region.toLowerCase().contains(query) ||
+            zone.mineral.toLowerCase().contains(query) ||
+            zone.empresa.toLowerCase().contains(query);
+        return matchesLevel &&
+            matchesRegion &&
+            matchesProvince &&
+            matchesDistrict &&
+            matchesSearch;
       }).toList();
     }
     if (!MiningDatasetService.instance.isLoaded) {
@@ -187,15 +201,47 @@ class DashboardRemoteDatasource {
   }
 
   Future<List<ZoneSummaryModel>> _fetchRemoteZones() async {
+    final now = DateTime.now();
+    final cachedAt = _remoteZonesCachedAt;
+    final cached = _remoteZonesCache;
+    if (cached != null &&
+        cachedAt != null &&
+        now.difference(cachedAt) < _remoteCacheDuration) {
+      return cached;
+    }
+
+    final inFlight = _remoteZonesRequest;
+    if (inFlight != null) return inFlight;
+
+    final request = _loadRemoteZones();
+    _remoteZonesRequest = request;
+    try {
+      final zones = await request;
+      _remoteZonesCache = zones;
+      _remoteZonesCachedAt = DateTime.now();
+      return zones;
+    } finally {
+      _remoteZonesRequest = null;
+    }
+  }
+
+  Future<List<ZoneSummaryModel>> _loadRemoteZones() async {
     try {
       final data = await _apiClient.getJson(
         '${SapEndpoints.backendBaseUrl}${SapEndpoints.zonesPath}',
       );
       if (data is! List) return const [];
+      final dataset = MiningDatasetService.instance;
       return data
           .whereType<Map>()
-          .map((item) => ZoneSummaryModel.fromGeoPrediaApi(
-              Map<String, dynamic>.from(item)))
+          .map((item) {
+            final json = Map<String, dynamic>.from(item);
+            final localRecord = dataset.getZoneByCode(json['id']?.toString() ?? '');
+            return ZoneSummaryModel.fromGeoPrediaApi(
+              json,
+              localRecord: localRecord,
+            );
+          })
           .where((zone) => zone.code.isNotEmpty)
           .toList();
     } catch (_) {

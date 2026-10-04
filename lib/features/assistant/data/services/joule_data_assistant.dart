@@ -15,7 +15,8 @@ class JouleAnswer {
 }
 
 class JouleDataAssistant {
-  JouleDataAssistant() : _apiClient = SapApiClient();
+  JouleDataAssistant({SapApiClient? apiClient})
+      : _apiClient = apiClient ?? SapApiClient();
 
   final SapApiClient _apiClient;
 
@@ -32,13 +33,16 @@ class JouleDataAssistant {
         final remoteText = response['answer']?.toString();
         if (remoteText != null && remoteText.isNotEmpty) {
           final facts = response['facts'] is List
-              ? (response['facts'] as List).map((item) => item.toString()).toList()
+              ? (response['facts'] as List)
+                  .map((item) => item.toString())
+                  .toList()
               : <String>[];
           return JouleAnswer(
             topic: response['joule_deployed'] == true
                 ? 'SAP Joule · GeoPredIA'
                 : 'Acción Joule preparada · BTP',
-            text: [remoteText, if (facts.isNotEmpty) facts.join('\n')].join('\n\n'),
+            text: [remoteText, if (facts.isNotEmpty) facts.join('\n')]
+                .join('\n\n'),
             sources: const ['API GeoPredIA en SAP BTP'],
           );
         }

@@ -4,7 +4,9 @@ import '../../../dashboard/data/services/mining_dataset_service.dart';
 import '../../data/services/joule_data_assistant.dart';
 
 class AssistantScreen extends StatefulWidget {
-  const AssistantScreen({super.key});
+  const AssistantScreen({super.key, this.assistant});
+
+  final JouleDataAssistant? assistant;
 
   @override
   State<AssistantScreen> createState() => _AssistantScreenState();
@@ -31,7 +33,7 @@ class _AssistantChatMessage {
 class _AssistantScreenState extends State<AssistantScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final JouleDataAssistant _assistant = JouleDataAssistant();
+  late final JouleDataAssistant _assistant;
   bool _isResponding = false;
 
   final List<_AssistantChatMessage> _messages = [
@@ -45,6 +47,12 @@ class _AssistantScreenState extends State<AssistantScreen> {
       sources: ['Dataset minero local'],
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _assistant = widget.assistant ?? JouleDataAssistant();
+  }
 
   List<String> get _quickPrompts {
     final zones = MiningDatasetService.instance.allZones;
