@@ -15,12 +15,13 @@ class SapApiException implements Exception {
 
   /// Fábrica de conveniencia para errores de conexión (sin internet,
   /// timeout, DNS, etc.) — no hay statusCode porque nunca llegó respuesta.
-  factory SapApiException.connection() =>
-      const SapApiException('No se pudo conectar con los servicios SAP. Verifica tu conexión.');
+  factory SapApiException.connection() => const SapApiException(
+      'No se pudo conectar con los servicios SAP. Verifica tu conexión.');
 
   /// Fábrica de conveniencia para cuando el token expiró o es inválido.
   factory SapApiException.unauthorized() =>
-      const SapApiException('Sesión expirada. Vuelve a iniciar sesión.', statusCode: 401);
+      const SapApiException('Sesión expirada. Vuelve a iniciar sesión.',
+          statusCode: 401);
 
   @override
   String toString() => 'SapApiException($statusCode): $message';
