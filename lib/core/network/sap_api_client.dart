@@ -36,6 +36,16 @@ class SapApiClient {
     }
   }
 
+  /// GET que conserva el tipo JSON real (lista u objeto).
+  Future<dynamic> getJson(String url, {Map<String, dynamic>? queryParams}) async {
+    try {
+      final response = await _dio.get(url, queryParameters: queryParams);
+      return response.data;
+    } on DioException catch (e) {
+      throw _mapError(e);
+    }
+  }
+
   /// POST genérico, usado por ejemplo para enviar una decisión de
   /// revisión a SAP Build Process Automation.
   Future<Map<String, dynamic>> post(String url, {required Map<String, dynamic> body}) async {
