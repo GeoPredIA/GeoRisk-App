@@ -57,4 +57,30 @@ class ZoneSummaryModel extends ZoneSummary {
       totalEvaluaciones: (json['TotalEvaluaciones'] as num?)?.toInt() ?? 1,
     );
   }
+
+  /// Traduce la respuesta del backend GeoPredIA desplegado en SAP BTP.
+  factory ZoneSummaryModel.fromGeoPrediaApi(Map<String, dynamic> json) {
+    final evaluation = json['latest_evaluation'] is Map
+        ? Map<String, dynamic>.from(json['latest_evaluation'] as Map)
+        : <String, dynamic>{};
+    final subindices = evaluation['subindices'] is Map
+        ? Map<String, dynamic>.from(evaluation['subindices'] as Map)
+        : <String, dynamic>{};
+    int score(dynamic value) => value is num ? value.round() : 0;
+
+    return ZoneSummaryModel(
+      code: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      region: json['region']?.toString() ?? '',
+      globalScore: score(evaluation['global_risk']),
+      geoScore: score(subindices['geological']),
+      envScore: score(subindices['environmental']),
+      socialScore: score(subindices['social']),
+      hasActiveInspection:
+          evaluation['review_status']?.toString().toLowerCase() == 'pending',
+      departamento: json['region']?.toString() ?? '',
+      estadoRevision: evaluation['review_status']?.toString() ?? 'Pendiente',
+      totalEvaluaciones: evaluation.isEmpty ? 0 : 1,
+    );
+  }
 }

@@ -38,6 +38,10 @@ La solución está diseñada sobre una arquitectura empresarial híbrida:
 
 ## Cómo Ejecutar el Proyecto Localmente
 
+La configuración SAP usada por esta app está documentada en
+[`SAP_INTEGRATIONS.md`](SAP_INTEGRATIONS.md). La app consume la API BTP existente
+y conserva el dataset empaquetado como respaldo para demos sin conexión.
+
 Asegúrate de tener instalado [Flutter](https://flutter.dev/?utm_source=gemini) en tu entorno de desarrollo.
 
 1. Clona el repositorio:

@@ -1,4 +1,6 @@
 import '../../../dashboard/data/services/mining_dataset_service.dart';
+import '../../../../core/constants/sap_endpoints.dart';
+import '../../../../core/network/sap_api_client.dart';
 
 class JouleAnswer {
   final String text;
@@ -13,9 +15,41 @@ class JouleAnswer {
 }
 
 class JouleDataAssistant {
-  const JouleDataAssistant();
+  JouleDataAssistant() : _apiClient = SapApiClient();
 
-  JouleAnswer answer(String prompt) {
+  final SapApiClient _apiClient;
+
+  Future<JouleAnswer> answer(String prompt) async {
+    final zones = MiningDatasetService.instance.allZones;
+    if (zones.isNotEmpty) {
+      final query = _normalize(prompt);
+      final selected = _findZone(query, zones) ?? zones.first;
+      try {
+        final response = await _apiClient.post(
+          SapEndpoints.jouleBaseUrl,
+          body: {'zone_id': selected.code, 'question': prompt},
+        );
+        final remoteText = response['answer']?.toString();
+        if (remoteText != null && remoteText.isNotEmpty) {
+          final facts = response['facts'] is List
+              ? (response['facts'] as List).map((item) => item.toString()).toList()
+              : <String>[];
+          return JouleAnswer(
+            topic: response['joule_deployed'] == true
+                ? 'SAP Joule · GeoPredIA'
+                : 'Acción Joule preparada · BTP',
+            text: [remoteText, if (facts.isNotEmpty) facts.join('\n')].join('\n\n'),
+            sources: const ['API GeoPredIA en SAP BTP'],
+          );
+        }
+      } catch (_) {
+        // Conserva el asistente local para la demo si no hay conectividad.
+      }
+    }
+    return _answerLocal(prompt);
+  }
+
+  JouleAnswer _answerLocal(String prompt) {
     final dataset = MiningDatasetService.instance;
     final zones = dataset.allZones;
     final query = _normalize(prompt);

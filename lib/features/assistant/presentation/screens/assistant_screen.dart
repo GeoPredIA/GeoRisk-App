@@ -31,7 +31,7 @@ class _AssistantChatMessage {
 class _AssistantScreenState extends State<AssistantScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final JouleDataAssistant _assistant = const JouleDataAssistant();
+  final JouleDataAssistant _assistant = JouleDataAssistant();
   bool _isResponding = false;
 
   final List<_AssistantChatMessage> _messages = [
@@ -81,7 +81,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
     _scrollToLatest();
 
     await Future<void>.delayed(const Duration(milliseconds: 250));
-    final answer = _assistant.answer(prompt);
+    final answer = await _assistant.answer(prompt);
     if (!mounted) return;
     setState(() {
       _isResponding = false;

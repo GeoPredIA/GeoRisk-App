@@ -7,17 +7,34 @@
 // =============================================================
 
 import '../../../../core/network/sap_api_client.dart';
+import '../../../../core/constants/sap_endpoints.dart';
 import '../models/zone_summary_model.dart';
 import '../models/dashboard_stats_model.dart';
 import '../services/mining_dataset_service.dart';
 
 class DashboardRemoteDatasource {
-  // ignore: unused_field
   final SapApiClient _apiClient;
 
   const DashboardRemoteDatasource(this._apiClient);
 
   Future<DashboardStatsModel> fetchStats() async {
+    final remote = await _fetchRemoteZones();
+    if (remote.isNotEmpty) {
+      final average = remote.fold<int>(0, (sum, z) => sum + z.globalScore) /
+          remote.length;
+      final pending = remote.where((z) => z.hasActiveInspection).length;
+      return DashboardStatsModel(
+        totalZones: remote.length,
+        newZonesThisMonth: 0,
+        avgGlobalRisk: double.parse(average.toStringAsFixed(1)),
+        avgRiskLabel: average >= 70 ? 'Alto' : (average >= 40 ? 'Moderado' : 'Bajo'),
+        pendingReviews: pending,
+        pendingCriticality: pending > 0 ? 'Requiere revisión' : 'Sin pendientes',
+        completedEvaluations:
+            remote.fold<int>(0, (sum, z) => sum + z.totalEvaluaciones),
+        aiConfidence: 96.8,
+      );
+    }
     if (!MiningDatasetService.instance.isLoaded) {
       await MiningDatasetService.instance.init();
     }
@@ -66,6 +83,21 @@ class DashboardRemoteDatasource {
     String? province,
     String? district,
   }) async {
+    final remote = await _fetchRemoteZones();
+    if (remote.isNotEmpty) {
+      final query = (searchQuery ?? '').toLowerCase();
+      return remote.where((zone) {
+        final level = _levelLabel(zone.globalScore);
+        final matchesLevel = filterLevel == null ||
+            filterLevel == 'TODOS' ||
+            filterLevel == level;
+        final matchesSearch = query.isEmpty ||
+            zone.name.toLowerCase().contains(query) ||
+            zone.code.toLowerCase().contains(query) ||
+            zone.region.toLowerCase().contains(query);
+        return matchesLevel && matchesSearch;
+      }).toList();
+    }
     if (!MiningDatasetService.instance.isLoaded) {
       await MiningDatasetService.instance.init();
     }
@@ -152,5 +184,23 @@ class DashboardRemoteDatasource {
     if (score >= 70) return 'ALTO';
     if (score >= 40) return 'MEDIO';
     return 'BAJO';
+  }
+
+  Future<List<ZoneSummaryModel>> _fetchRemoteZones() async {
+    try {
+      final data = await _apiClient.getJson(
+        '${SapEndpoints.backendBaseUrl}${SapEndpoints.zonesPath}',
+      );
+      if (data is! List) return const [];
+      return data
+          .whereType<Map>()
+          .map((item) => ZoneSummaryModel.fromGeoPrediaApi(
+              Map<String, dynamic>.from(item)))
+          .where((zone) => zone.code.isNotEmpty)
+          .toList();
+    } catch (_) {
+      // La app móvil sigue operativa con el dataset empaquetado si BTP cae.
+      return const [];
+    }
   }
 }
